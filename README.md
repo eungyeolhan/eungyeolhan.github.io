@@ -1,2 +1,2 @@
-# eungyeolhan.github.io
+# Welcome
 A website that showcases my projects
