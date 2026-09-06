@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elia Han</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #d0b3e0;
+            --bg-mid: #bfe1fb;
+            --panel-bg: #fffbfe;
+            --panel-bg-dark: #ffe3f2;
+            --text-main: #5b3a78;
+            --text-muted: #9b7cb3;
+            --accent: #ff9fd0;
+            --accent-2: #7ec4fb;
+            --titlebar: linear-gradient(90deg, #cbaee0, #ff9fd0);
+            --bevel-light: #ffffff;
+            --bevel-dark: #cbaee0;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'VT323', monospace;
+        }
+        h1, h2, .pixel {
+            font-family: 'Press Start 2P', cursive;
+        }
+        body {
+            background: linear-gradient(160deg, var(--bg-deep) 0%, var(--bg-mid) 100%);
+            color: var(--text-main);
+            line-height: 1.5;
+            min-height: 100vh;
+            padding: 2.5rem 1rem 3rem;
+            font-size: 1.2rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Twinkling sparkles */
+        .sparkle {
+            position: fixed;
+            color: var(--accent);
+            pointer-events: none;
+            user-select: none;
+            z-index: 0;
+            animation: twinkle 2.4s ease-in-out infinite;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.25; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.15); }
+        }
+
+        .page {
+            max-width: 720px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .hero h1 {
+            font-size: 1.6rem;
+            color: var(--text-main);
+            margin-bottom: 0.9rem;
+            letter-spacing: 0.05em;
+        }
+        .hero .subtitle {
+            display: inline-block;
+            background-color: var(--panel-bg);
+            color: var(--text-main);
+            padding: 0.4rem 1rem;
+            font-size: 1.1rem;
+            border: 3px solid var(--bg-deep);
+            box-shadow: 3px 3px 0 var(--accent-2);
+        }
+
+        /* Pixel nav buttons */
+        nav.pixel-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin: 1.75rem 0 0;
+        }
+        nav.pixel-nav a {
+            text-decoration: none;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.65rem;
+            color: var(--text-main);
+            background-color: var(--panel-bg);
+            padding: 0.65rem 0.8rem;
+            border-top: 3px solid var(--bevel-light);
+            border-left: 3px solid var(--bevel-light);
+            border-bottom: 3px solid var(--bevel-dark);
+            border-right: 3px solid var(--bevel-dark);
+        }
+        nav.pixel-nav a:hover {
+            background-color: var(--accent-2);
+            color: var(--text-main);
+        }
+        nav.pixel-nav a:active {
+            border-top: 3px solid var(--bevel-dark);
+            border-left: 3px solid var(--bevel-dark);
+            border-bottom: 3px solid var(--bevel-light);
+            border-right: 3px solid var(--bevel-light);
+        }
+
+        /* Retro "window" sections */
+        section {
+            margin-top: 2.5rem;
+            background-color: var(--panel-bg);
+            border-top: 3px solid var(--bevel-light);
+            border-left: 3px solid var(--bevel-light);
+            border-bottom: 3px solid var(--bevel-dark);
+            border-right: 3px solid var(--bevel-dark);
+            box-shadow: 6px 6px 0 rgba(0,0,0,0.35);
+            scroll-margin-top: 1.5rem;
+        }
+        .title-bar {
+            background: var(--titlebar);
+            color: var(--text-main);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            padding: 0.6rem 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 3px solid var(--bevel-dark);
+        }
+        .title-bar .win-dots {
+            display: flex;
+            gap: 5px;
+        }
+        .title-bar .win-dots span {
+            width: 12px;
+            height: 12px;
+            background-color: var(--panel-bg);
+            border-top: 2px solid var(--bevel-light);
+            border-left: 2px solid var(--bevel-light);
+            border-bottom: 2px solid var(--bevel-dark);
+            border-right: 2px solid var(--bevel-dark);
+            display: inline-block;
+        }
+        .section-body {
+            padding: 1.5rem 1.75rem 1.75rem;
+        }
+        .placeholder-text {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 1.15rem;
+        }
+
+        /* Skills */
+        .skills-placeholder {
+            border: 2px dashed var(--accent);
+            padding: 1.1rem;
+            color: var(--text-muted);
+            font-style: italic;
+            background-color: var(--panel-bg-dark);
+            font-size: 1.1rem;
+        }
+
+        /* Projects */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .project-placeholder {
+            border: 2px dashed var(--accent);
+            padding: 1.4rem;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-style: italic;
+            text-align: center;
+            background-color: var(--panel-bg-dark);
+            font-size: 1.05rem;
+        }
+
+        /* Contact */
+        .contact-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.85rem;
+        }
+        .contact-card {
+            flex: 1;
+            min-width: 150px;
+            background-color: var(--panel-bg-dark);
+            border-top: 3px solid var(--bevel-light);
+            border-left: 3px solid var(--bevel-light);
+            border-bottom: 3px solid var(--bevel-dark);
+            border-right: 3px solid var(--bevel-dark);
+            padding: 1rem;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-main);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.65rem;
+            transition: background-color 0.15s ease;
+        }
+        .contact-card:hover {
+            background-color: var(--accent-2);
+        }
+        .contact-card:active {
+            border-top: 3px solid var(--bevel-dark);
+            border-left: 3px solid var(--bevel-dark);
+            border-bottom: 3px solid var(--bevel-light);
+            border-right: 3px solid var(--bevel-light);
+        }
+        .contact-card .contact-icon {
+            display: block;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-family: 'VT323', monospace;
+        }
+
+        /* Retro footer / hit counter */
+        footer {
+            text-align: center;
+            margin-top: 2.5rem;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+        .hit-counter {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--text-main);
+            border: 2px solid var(--accent-2);
+            padding: 0.35rem 0.8rem;
+            margin-top: 0.6rem;
+            font-family: 'VT323', monospace;
+            color: #f9ece1;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <span class="sparkle" style="top: 8%; left: 6%; font-size: 1.6rem;">✧</span>
+    <span class="sparkle" style="top: 18%; right: 8%; font-size: 1.4rem; animation-delay: 0.6s;">✦</span>
+    <span class="sparkle" style="top: 42%; left: 4%; font-size: 1.3rem; animation-delay: 1.1s;">✧</span>
+    <span class="sparkle" style="top: 60%; right: 5%; font-size: 1.6rem; animation-delay: 0.3s;">✦</span>
+    <span class="sparkle" style="top: 80%; left: 8%; font-size: 1.4rem; animation-delay: 1.4s;">✧</span>
+    <span class="sparkle" style="top: 92%; right: 10%; font-size: 1.3rem; animation-delay: 0.9s;">✦</span>
+
+    <div class="page">
+        <div class="hero">
+            <h1>ELIA HAN</h1>
+            <span class="subtitle">[insert subtitle]</span>
+
+            <nav class="pixel-nav">
+                <a href="#about">ABOUT ME</a>
+                <a href="#skills">SKILLS</a>
+                <a href="#projects">PROJECTS</a>
+                <a href="#contact">CONTACT</a>
+            </nav>
+        </div>
+
+        <section id="about">
+            <div class="title-bar">
+                <span>about_me.txt</span>
+                <span class="win-dots"><span></span><span></span><span></span></span>
+            </div>
+            <div class="section-body">
+                <p class="placeholder-text">[Add your introduction here]</p>
+            </div>
+        </section>
+
+        <section id="skills">
+            <div class="title-bar">
+                <span>skills.exe</span>
+                <span class="win-dots"><span></span><span></span><span></span></span>
+            </div>
+            <div class="section-body">
+                <div class="skills-placeholder">
+                    [Add your skill badges/list here]
+                </div>
+            </div>
+        </section>
+
+        <section id="projects">
+            <div class="title-bar">
+                <span>projects.zip</span>
+                <span class="win-dots"><span></span><span></span><span></span></span>
+            </div>
+            <div class="section-body">
+                <div class="projects-grid">
+                    <div class="project-placeholder">[Add a project card here]</div>
+                    <div class="project-placeholder">[Add a project card here]</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <div class="title-bar">
+                <span>contact.html</span>
+                <span class="win-dots"><span></span><span></span><span></span></span>
+            </div>
+            <div class="section-body">
+                <div class="contact-grid">
+                    <a href="#" class="contact-card">
+                        <span class="contact-icon">✉</span>
+                        EMAIL
+                    </a>
+                    <a href="#" class="contact-card">
+                        <span class="contact-icon">in</span>
+                        LINKEDIN
+                    </a>
+                    <a href="#" class="contact-card">
+                        <span class="contact-icon">⌥</span>
+                        GITHUB
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <span class="hit-counter">✦ YOU ARE VISITOR #000001 ✦</span>
+        </footer>
+    </div>
+</body>
+</html>
