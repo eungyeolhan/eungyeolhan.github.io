@@ -68,7 +68,7 @@ const mcSpeech = document.getElementById('mcSpeech');
 const mcModalOverlay = document.getElementById('mcModalOverlay');
 const mcModalOk = document.getElementById('mcModalOk');
 
-const mcWalkFrames = ['mc2.png', 'mc3.png'];
+const mcWalkFrames = ['river_standing2.png', 'river_standing3.png'];
 let mcWalkFrameIndex = 0;
 let mcWalkTimer = null;
 let mcSpeechTimer = null;
@@ -83,7 +83,7 @@ function mcStartWalking() {
 function mcStopWalking() {
   clearInterval(mcWalkTimer);
   mcWalkTimer = null;
-  mcImg.src = 'mc.png';
+  mcImg.src = 'river_standing.png';
 }
 
 function mcPopSpeech() {
