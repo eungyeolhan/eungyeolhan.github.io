@@ -288,6 +288,9 @@ footer { text-align: center; margin-top: 2.5rem; }
   left: 16px;
   z-index: 60;
   cursor: pointer;
+}
+/* floating animation only plays while she's walking (hover/focus) — she stands still on the ground otherwise */
+.mc-sprite.walking {
   animation: mc-float 2.4s ease-in-out infinite;
 }
 @keyframes mc-float {
@@ -295,12 +298,12 @@ footer { text-align: center; margin-top: 2.5rem; }
   50% { transform: translateY(-22px); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mc-sprite { animation: none; }
+  .mc-sprite.walking { animation: none; }
 }
 .mc-sprite:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
 .mc-sprite img {
   display: block;
-  width: 50px;
+  width: 66px;
   height: auto;
   image-rendering: pixelated;
   transform-origin: bottom center;
@@ -375,5 +378,5 @@ footer { text-align: center; margin-top: 2.5rem; }
 .mc-modal-buttons { display: flex; justify-content: center; }
 
 @media (max-width: 600px) {
-  .mc-sprite img { width: 42px; }
+  .mc-sprite img { width: 56px; }
 }
