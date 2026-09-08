@@ -70,21 +70,23 @@
 
     <section id="projects">
       <h2 class="section-heading">projects</h2>
-      <div class="project-grid">
-        <a href="https://github.com/eungyeolhan/Video-Converter" target="_blank" rel="noopener" class="block interactive project-block" style="text-decoration:none;color:inherit;">
-          <div class="dot">1</div>
-          <h3>Video Converter</h3>
-          <p>Turns YouTube, Instagram, or TikTok links into MP3, MP4, WAV, FLAC, OPUS, WEBM, or MKV files. Built in Python.</p>
-        </a>
-        <a href="https://github.com/Tabel0112/CSC111-Project-2" target="_blank" rel="noopener" class="block interactive project-block" style="text-decoration:none;color:inherit;">
-          <div class="dot">2</div>
-          <h3>CSC111 Project 2</h3>
-          <p>A graph-based simulator that models economic shocks with a custom dashboard UI. Built in Python for a school project.</p>
-        </a>
-        <div class="block interactive project-block">
-          <div class="dot">?</div>
-          <h3>???</h3>
-          <p>Mystery/detective 2D game — in progress. More details coming soon!</p>
+      <div class="block interactive projects-wrap">
+        <div class="project-grid">
+          <a href="https://github.com/eungyeolhan/Video-Converter" target="_blank" rel="noopener" class="block project-card project-block" style="text-decoration:none;color:inherit;">
+            <div class="dot">1</div>
+            <h3>Video Converter</h3>
+            <p>Turns YouTube, Instagram, or TikTok links into MP3, MP4, WAV, FLAC, OPUS, WEBM, or MKV files. Built in Python.</p>
+          </a>
+          <a href="https://github.com/Tabel0112/CSC111-Project-2" target="_blank" rel="noopener" class="block project-card project-block" style="text-decoration:none;color:inherit;">
+            <div class="dot">2</div>
+            <h3>CSC111 Project 2</h3>
+            <p>A graph-based simulator that models economic shocks with a custom dashboard UI. Built in Python for a school project.</p>
+          </a>
+          <div class="block project-card project-block">
+            <div class="dot">?</div>
+            <h3>???</h3>
+            <p>Mystery/detective 2D game — in progress. More details coming soon!</p>
+          </div>
         </div>
       </div>
     </section>
@@ -131,6 +133,20 @@
       <a href="https://github.com/eungyeolhan" target="_blank" rel="noopener" class="press-start" style="text-decoration:none;">PRESS START TO CONTINUE</a>
     </footer>
 
+  </div>
+
+  <div id="mcSprite" class="mc-sprite" role="button" tabindex="0" aria-label="mystery detective character">
+    <div class="mc-speech" id="mcSpeech">detective game coming soon!</div>
+    <img src="mc.png" alt="pixel art detective girl mascot" id="mcImg">
+  </div>
+
+  <div class="mc-modal-overlay" id="mcModalOverlay">
+    <div class="mc-modal">
+      <p>you are being redirected to the artist/my teammate's site</p>
+      <div class="mc-modal-buttons">
+        <button id="mcModalOk" class="theme-toggle" type="button">ok</button>
+      </div>
+    </div>
   </div>
 
   <script src="script.js"></script>
