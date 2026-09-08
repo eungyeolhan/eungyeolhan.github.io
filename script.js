@@ -122,7 +122,9 @@ mcSprite.addEventListener('keydown', (e) => {
     mcOpenModal();
   }
 });
-mcModalOk.addEventListener('click', mcCloseModal);
+mcModalOk.addEventListener('click', () => {
+  window.location.href = 'https://viaxshan.github.io/';
+});
 mcModalOverlay.addEventListener('click', (e) => {
   if (e.target === mcModalOverlay) mcCloseModal();
 });
