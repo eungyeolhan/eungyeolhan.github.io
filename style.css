@@ -198,11 +198,32 @@ section h2::before { content: "▸ "; color: var(--deep); }
   box-shadow: inset 2px 2px 0 rgba(255,255,255,0.35), inset -2px -2px 0 rgba(0,0,0,0.25);
 }
 
-/* ---- projects: each one is its own big bubble (treated as a big block) ---- */
+/* ---- projects: one big block wraps the whole grid (pops like the other sections) ---- */
+.projects-wrap { margin-top: 0; }
+
 .project-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.5rem;
+}
+/* individual project cards: separate hover animation (tilt + grow) instead of the pop-up used elsewhere */
+.project-card {
+  margin-top: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.project-card:hover {
+  transform: scale(1.045) rotate(-1.2deg);
+  box-shadow:
+    inset 4px 4px 0 rgba(255,255,255,0.5),
+    inset -4px -4px 0 rgba(0,0,0,0.15),
+    9px 9px 0 var(--deep);
+}
+.project-card:active {
+  transform: scale(1) rotate(0deg);
+  box-shadow:
+    inset 4px 4px 0 rgba(255,255,255,0.5),
+    inset -4px -4px 0 rgba(0,0,0,0.15),
+    6px 6px 0 var(--deep);
 }
 .project-block {
   display: flex;
@@ -266,4 +287,92 @@ footer { text-align: center; margin-top: 2.5rem; }
 @media (max-width: 600px) {
   .hero h1 { font-size: 1.15rem; }
   .block { padding: 1.3rem; }
+}
+
+/* ---- mystery mascot sprite, bottom-left of the screen ---- */
+.mc-sprite {
+  position: fixed;
+  bottom: 0;
+  left: 16px;
+  z-index: 60;
+  cursor: pointer;
+}
+.mc-sprite:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+.mc-sprite img {
+  display: block;
+  width: 96px;
+  height: auto;
+  image-rendering: pixelated;
+  transform-origin: bottom center;
+  transition: transform 0.2s ease;
+}
+.mc-sprite:hover img,
+.mc-sprite:focus-visible img {
+  transform: scale(1.12);
+}
+
+.mc-speech {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-bottom: 8px;
+  transform: translate(-50%, 8px);
+  background: var(--panel);
+  border: 3px solid var(--ink);
+  box-shadow: inset 2px 2px 0 rgba(255,255,255,0.5), inset -2px -2px 0 rgba(0,0,0,0.15);
+  padding: 0.6rem 0.8rem;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.45rem;
+  line-height: 1.4;
+  color: var(--ink);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.mc-speech::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 22px;
+  border: 6px solid transparent;
+  border-top-color: var(--ink);
+}
+.mc-speech.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ---- redirect popup ---- */
+.mc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 12, 30, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
+}
+.mc-modal-overlay.show { display: flex; }
+.mc-modal {
+  background: var(--panel);
+  border: 4px solid var(--ink);
+  box-shadow:
+    inset 4px 4px 0 rgba(255,255,255,0.5),
+    inset -4px -4px 0 rgba(0,0,0,0.15),
+    6px 6px 0 var(--deep);
+  padding: 1.6rem;
+  max-width: 300px;
+  text-align: center;
+}
+.mc-modal p {
+  font-size: 1.1rem;
+  color: var(--ink);
+  margin-bottom: 1.2rem;
+}
+.mc-modal-buttons { display: flex; justify-content: center; }
+
+@media (max-width: 600px) {
+  .mc-sprite img { width: 72px; }
 }
