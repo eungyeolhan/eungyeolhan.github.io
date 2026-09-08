@@ -191,6 +191,7 @@ section h2::before { content: "▸ "; color: var(--deep); }
 }
 
 /* ---- projects: one big block wraps the whole grid (pops like the other sections) ---- */
+.projects-wrap { margin-top: 2rem; }
 
 .project-grid {
   display: grid;
@@ -310,12 +311,13 @@ footer { text-align: center; margin-top: 2.5rem; }
   transform: scale(1.12);
 }
 
+/* speech bubble: up and well to the right of her, not centered over her head */
 .mc-speech {
   position: absolute;
-  bottom: 100%;
-  left: 50%;
-  margin-bottom: 8px;
-  transform: translate(-50%, 8px);
+  left: 100%;
+  bottom: calc(100% + 26px);
+  margin-left: 12px;
+  transform: translateY(8px);
   background: var(--panel);
   border: 3px solid var(--ink);
   box-shadow: inset 2px 2px 0 rgba(255,255,255,0.5), inset -2px -2px 0 rgba(0,0,0,0.15);
@@ -333,47 +335,37 @@ footer { text-align: center; margin-top: 2.5rem; }
   content: "";
   position: absolute;
   top: 100%;
-  left: 22px;
+  left: 18px;
   border: 6px solid transparent;
   border-top-color: var(--ink);
 }
 .mc-speech.show {
   opacity: 1;
-  transform: translate(-50%, 0);
+  transform: translateY(0);
 }
 
-/* ---- redirect chat box: well up and to the right of the character, roomy enough to read ---- */
+/* ---- redirect popup: centered on screen ---- */
 .mc-modal-overlay {
   position: fixed;
   inset: 0;
-  background: transparent;
+  background: rgba(20, 12, 30, 0.55);
   display: none;
+  align-items: center;
+  justify-content: center;
   z-index: 100;
+  padding: 1rem;
 }
-.mc-modal-overlay.show { display: block; }
+.mc-modal-overlay.show { display: flex; }
 .mc-modal {
-  position: fixed;
-  left: 130px;
-  bottom: 320px;
-  z-index: 101;
   background: var(--panel);
   border: 4px solid var(--ink);
   box-shadow:
     inset 4px 4px 0 rgba(255,255,255,0.5),
     inset -4px -4px 0 rgba(0,0,0,0.15),
     6px 6px 0 var(--deep);
-  padding: 1.4rem;
-  width: min(320px, calc(100vw - 160px));
+  padding: 1.6rem;
+  max-width: 300px;
   text-align: center;
-}
-.mc-modal::after {
-  content: "";
-  position: absolute;
-  bottom: -20px;
-  left: 28px;
-  border: 10px solid transparent;
-  border-top-color: var(--ink);
-  transform: rotate(35deg);
 }
 .mc-modal p {
   font-size: 1.1rem;
@@ -384,5 +376,4 @@ footer { text-align: center; margin-top: 2.5rem; }
 
 @media (max-width: 600px) {
   .mc-sprite img { width: 42px; }
-  .mc-modal { left: 70px; bottom: 260px; }
 }
