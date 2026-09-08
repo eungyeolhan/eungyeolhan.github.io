@@ -74,6 +74,7 @@ let mcWalkTimer = null;
 let mcSpeechTimer = null;
 
 function mcStartWalking() {
+  mcSprite.classList.add('walking'); // only float while actually walking
   mcWalkFrameIndex = 0;
   mcWalkTimer = setInterval(() => {
     mcImg.src = mcWalkFrames[mcWalkFrameIndex % mcWalkFrames.length];
@@ -84,6 +85,7 @@ function mcStopWalking() {
   clearInterval(mcWalkTimer);
   mcWalkTimer = null;
   mcImg.src = 'river_standing.png';
+  mcSprite.classList.remove('walking'); // stand still, feet on the ground
 }
 
 function mcPopSpeech() {
@@ -131,3 +133,14 @@ mcModalOverlay.addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') mcCloseModal();
 });
+
+// ---- PRESS START TO CONTINUE bumps the heart count ----
+const pressStart = document.getElementById('pressStart');
+const heartCount = document.getElementById('heartCount');
+if (pressStart && heartCount) {
+  pressStart.addEventListener('click', (e) => {
+    e.preventDefault(); // stay on the page so the heart bump is visible instead of navigating away
+    const current = parseInt(heartCount.textContent.replace('×', ''), 10) || 0;
+    heartCount.textContent = '×' + (current + 1);
+  });
+}
