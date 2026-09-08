@@ -191,7 +191,6 @@ section h2::before { content: "▸ "; color: var(--deep); }
 }
 
 /* ---- projects: one big block wraps the whole grid (pops like the other sections) ---- */
-.projects-wrap { margin-top: 0; }
 
 .project-grid {
   display: grid;
@@ -284,15 +283,15 @@ footer { text-align: center; margin-top: 2.5rem; }
 /* ---- mystery mascot sprite, bottom-left of the screen ---- */
 .mc-sprite {
   position: fixed;
-  bottom: 18px;
+  bottom: 40px;
   left: 16px;
   z-index: 60;
   cursor: pointer;
-  animation: mc-float 2.6s ease-in-out infinite;
+  animation: mc-float 2.4s ease-in-out infinite;
 }
 @keyframes mc-float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  50% { transform: translateY(-22px); }
 }
 @media (prefers-reduced-motion: reduce) {
   .mc-sprite { animation: none; }
@@ -300,7 +299,7 @@ footer { text-align: center; margin-top: 2.5rem; }
 .mc-sprite:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
 .mc-sprite img {
   display: block;
-  width: 68px;
+  width: 50px;
   height: auto;
   image-rendering: pixelated;
   transform-origin: bottom center;
@@ -343,7 +342,7 @@ footer { text-align: center; margin-top: 2.5rem; }
   transform: translate(-50%, 0);
 }
 
-/* ---- redirect chat box: appears diagonally up and to the right of the character ---- */
+/* ---- redirect chat box: well up and to the right of the character, roomy enough to read ---- */
 .mc-modal-overlay {
   position: fixed;
   inset: 0;
@@ -354,8 +353,8 @@ footer { text-align: center; margin-top: 2.5rem; }
 .mc-modal-overlay.show { display: block; }
 .mc-modal {
   position: fixed;
-  left: 108px;
-  bottom: 200px;
+  left: 130px;
+  bottom: 320px;
   z-index: 101;
   background: var(--panel);
   border: 4px solid var(--ink);
@@ -364,7 +363,7 @@ footer { text-align: center; margin-top: 2.5rem; }
     inset -4px -4px 0 rgba(0,0,0,0.15),
     6px 6px 0 var(--deep);
   padding: 1.4rem;
-  max-width: min(260px, calc(100vw - 140px));
+  width: min(320px, calc(100vw - 160px));
   text-align: center;
 }
 .mc-modal::after {
@@ -384,6 +383,6 @@ footer { text-align: center; margin-top: 2.5rem; }
 .mc-modal-buttons { display: flex; justify-content: center; }
 
 @media (max-width: 600px) {
-  .mc-sprite img { width: 56px; }
-  .mc-modal { left: 88px; bottom: 170px; }
+  .mc-sprite img { width: 42px; }
+  .mc-modal { left: 70px; bottom: 260px; }
 }
