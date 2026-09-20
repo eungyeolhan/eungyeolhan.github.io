@@ -144,3 +144,16 @@ if (pressStart && heartCount) {
     heartCount.textContent = '×' + (current + 1);
   });
 }
+
+// ---- nav links: scroll so the section's header sits just below the sticky nav ----
+const navBar = document.querySelector('.nav-bar');
+document.querySelectorAll('nav.qblocks a[href^="#"]').forEach((link) => {
+  link.addEventListener('click', (e) => {
+    const target = document.querySelector(link.getAttribute('href'));
+    if (!target || !navBar) return;
+    e.preventDefault();
+    const gap = 16; // breathing room between the nav bar and the section's top edge
+    const top = target.getBoundingClientRect().top + window.scrollY - navBar.offsetHeight - gap;
+    window.scrollTo({ top, behavior: reduceMotion ? 'auto' : 'smooth' });
+  });
+});
