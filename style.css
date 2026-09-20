@@ -158,10 +158,9 @@ nav.qblocks a:active, .theme-toggle:active { transform: translateY(0); }
 nav.qblocks a:focus-visible, .theme-toggle:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .theme-toggle { font-size: 0.8rem; padding: 0.6rem 0.75rem; line-height: 1; }
 
-/* ---- leave room for the sticky nav so section headers stay visible after clicking a nav link ---- */
+/* ---- fallback offset for direct links like /#education (nav clicks are handled precisely in script.js) ---- */
 section[id] { scroll-margin-top: 6rem; }
 @media (max-width: 600px) {
-  /* nav wraps onto multiple rows on phones, so it's taller */
   section[id] { scroll-margin-top: 9rem; }
 }
 
@@ -207,7 +206,6 @@ section h2::before { content: "▸ "; color: var(--deep); }
   margin-bottom: 0.6rem;
 }
 .edu-entry .edu-school { color: var(--ink); }
-.edu-entry .edu-meta { color: var(--muted); }
 
 /* ---- projects: one big block wraps the whole grid (pops like the other sections) ---- */
 .projects-wrap { margin-top: 2rem; }
