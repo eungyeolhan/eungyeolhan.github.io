@@ -106,7 +106,7 @@ img { image-rendering: pixelated; }
   margin-top: 2rem;
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
-/* big blocks (about/skills/contact + project blocks): pop-out animation only, no color/highlight change */
+/* big blocks (about/skills/education/contact + project blocks): pop-out animation only, no color/highlight change */
 .block.interactive:hover {
   transform: translateY(-4px);
   box-shadow:
@@ -158,6 +158,13 @@ nav.qblocks a:active, .theme-toggle:active { transform: translateY(0); }
 nav.qblocks a:focus-visible, .theme-toggle:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .theme-toggle { font-size: 0.8rem; padding: 0.6rem 0.75rem; line-height: 1; }
 
+/* ---- leave room for the sticky nav so section headers stay visible after clicking a nav link ---- */
+section[id] { scroll-margin-top: 6rem; }
+@media (max-width: 600px) {
+  /* nav wraps onto multiple rows on phones, so it's taller */
+  section[id] { scroll-margin-top: 9rem; }
+}
+
 section h2 { font-family: 'Press Start 2P', cursive; font-size: 0.9rem; margin-bottom: 1.2rem; color: var(--ink); }
 section h2::before { content: "▸ "; color: var(--deep); }
 
@@ -189,6 +196,18 @@ section h2::before { content: "▸ "; color: var(--deep); }
   background: var(--deep);
   box-shadow: inset 2px 2px 0 rgba(255,255,255,0.35), inset -2px -2px 0 rgba(0,0,0,0.25);
 }
+
+/* ---- education ---- */
+.edu-entry { margin-bottom: 1.5rem; }
+.edu-entry h3 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--ink);
+  margin-bottom: 0.6rem;
+}
+.edu-entry .edu-school { color: var(--ink); }
+.edu-entry .edu-meta { color: var(--muted); }
 
 /* ---- projects: one big block wraps the whole grid (pops like the other sections) ---- */
 .projects-wrap { margin-top: 2rem; }
