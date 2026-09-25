@@ -1,500 +1,294 @@
-:root {
-  --sky: #f3ecfc;
-  --panel: #ece0fb;
-  --mid: #d3b8f5;
-  --deep: #b48cec;
-  --ink: #4a2f66;
-  --muted: #8a6ba8;
-  --hud: #2e1f45;
-  --badge-bg: #3d2566;
-  --badge-fg: #d9c2f5;
-}
-body.dark {
-  --sky: #1f1430;
-  --panel: #2f2044;
-  --ink: #ece0fb;
-  --muted: #c7aee0;
-  --hud: #150c22;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  background: var(--sky);
-  color: var(--ink);
-  font-family: 'VT323', monospace;
-  font-size: 1.25rem;
-  line-height: 1.6;
-  overflow-x: hidden;
-  transition: background 0.3s ease, color 0.3s ease;
-}
-.px { font-family: 'Press Start 2P', cursive; }
-a { color: inherit; }
-img { image-rendering: pixelated; }
+const toggleBtn = document.getElementById('themeToggle');
+toggleBtn.addEventListener('click', () => {
+  const isDark = document.body.classList.toggle('dark');
+  toggleBtn.textContent = isDark ? '☀️' : '🌙';
+});
 
-/* ---- pixel mouse-trail squares ---- */
-.trail-pixel {
-  position: fixed;
-  pointer-events: none;
-  width: 8px;
-  height: 8px;
-  background: var(--deep);
-  z-index: 9999;
-  animation: pixelFade 0.7s steps(4) forwards;
-}
-@keyframes pixelFade {
-  0%   { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
-  100% { opacity: 0; transform: translate(-50%, -50%) translateY(-22px); }
+// world number = number of project entries (add a .project-block and it bumps automatically)
+const projectBlocks = document.querySelectorAll('#projects .project-block');
+const worldEl = document.querySelector('.world');
+if (worldEl && projectBlocks.length) {
+  worldEl.textContent = 'WORLD ' + projectBlocks.length + ' - 1';
 }
 
-/* ---- HUD bar ---- */
-.hud {
-  background: var(--hud);
-  color: #fff;
-  font-family: 'Press Start 2P', cursive;
-  font-size: 0.6rem;
-  padding: 0.7rem 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  border-bottom: 4px solid var(--deep);
+// retro "coin" blip on hover, played via Web Audio (no audio file needed)
+// NOTE: only attached to big blocks (.block.interactive) — skill items (.item)
+// keep their color highlight via CSS only, with no sound.
+let audioCtx;
+function ensureAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
 }
-.hud span { color: var(--mid); }
+let lastPlay = 0;
+function playBlip() {
+  const now = Date.now();
+  if (now - lastPlay < 90) return; // avoid overlapping/rapid re-fire
+  lastPlay = now;
+  const ctx = ensureAudioCtx();
+  const t0 = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'square';
+  osc.frequency.setValueAtTime(988, t0);
+  osc.frequency.setValueAtTime(1319, t0 + 0.06);
+  // ramp gain up from silence (avoids the "click/pop" a hard start causes)
+  gain.gain.setValueAtTime(0.0001, t0);
+  gain.gain.exponentialRampToValueAtTime(0.05, t0 + 0.008);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.18);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(t0);
+  osc.stop(t0 + 0.2);
+}
+document.querySelectorAll('.block.interactive').forEach((el) => {
+  el.addEventListener('mouseenter', playBlip);
+});
 
-/* ---- drifting pixel clouds ---- */
-.sky-layer {
-  position: relative;
-  height: 90px;
-  overflow: hidden;
-  background: var(--sky);
-}
-.cloud {
-  position: absolute;
-  top: 20px;
-  width: 32px;
-  height: 16px;
-  background: var(--mid);
-  box-shadow:
-    8px 0 0 var(--mid), 16px 0 0 var(--mid),
-    8px -8px 0 var(--mid), 16px -8px 0 var(--mid),
-    -4px 4px 0 var(--mid), 28px 4px 0 var(--mid);
-  animation: drift 26s linear infinite;
-  opacity: 0.9;
-}
-.cloud.c2 { top: 46px; animation-duration: 34s; animation-delay: -10s; transform: scale(0.8); }
-.cloud.c3 { top: 8px; animation-duration: 20s; animation-delay: -4s; transform: scale(0.6); }
-@keyframes drift {
-  from { left: -60px; }
-  to   { left: 100%; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .cloud { animation: none; left: 20%; }
-}
-
-.page { max-width: 720px; margin: 0 auto; padding: 0 2.5rem 3.5rem; }
-
-/* ---- pixel block bevel (chunky game block look) ---- */
-.block {
-  background: var(--panel);
-  border: 4px solid var(--ink);
-  box-shadow:
-    inset 4px 4px 0 rgba(255,255,255,0.5),
-    inset -4px -4px 0 rgba(0,0,0,0.15),
-    6px 6px 0 var(--deep);
-  padding: 1.75rem;
-  margin-top: 2rem;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
-}
-/* big blocks (about/skills/education/contact + project blocks): pop-out animation only, no color/highlight change */
-.block.interactive:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    inset 4px 4px 0 rgba(255,255,255,0.5),
-    inset -4px -4px 0 rgba(0,0,0,0.15),
-    6px 10px 0 var(--deep);
-}
-.block.interactive:active {
-  transform: translateY(0);
-  box-shadow:
-    inset 4px 4px 0 rgba(255,255,255,0.5),
-    inset -4px -4px 0 rgba(0,0,0,0.15),
-    6px 6px 0 var(--deep);
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (!reduceMotion) {
+  let lastSpawn = 0;
+  document.addEventListener('mousemove', (e) => {
+    const now = Date.now();
+    if (now - lastSpawn < 45) return;
+    lastSpawn = now;
+    const pixel = document.createElement('span');
+    pixel.className = 'trail-pixel';
+    pixel.style.left = e.clientX + 'px';
+    pixel.style.top = e.clientY + 'px';
+    document.body.appendChild(pixel);
+    setTimeout(() => pixel.remove(), 750);
+  });
 }
 
-/* ---- hero / level title ---- */
-.hero { text-align: center; margin-top: 1.5rem; }
-.hero .world { font-family: 'Press Start 2P', cursive; font-size: 0.65rem; color: var(--muted); margin-bottom: 0.9rem; letter-spacing: 0.05em; }
-.hero h1 { font-family: 'Press Start 2P', cursive; font-size: 1.7rem; margin-bottom: 1rem; }
-.hero .tagline { font-size: 1.25rem; color: var(--muted); margin-bottom: 1.75rem; }
+// ---- project detail modal ----
+// To add photos/videos later: drop an <img> or <video> tag (pointing at a
+// file in assets/) into the relevant project's `media` string below. The
+// media box sizes itself to whatever you put in it, and is skipped
+// entirely (no empty box) when `media` is left as ''.
+const projectData = {
+  'hello-webcam': {
+    dot: '1',
+    title: 'Hello Webcam!',
+    desc: 'A real-time hand gesture recognition tool built with OpenCV and MediaPipe. Recognizes gestures like thumbs up, peace sign, OK sign, prayer hands, waving, and a raised hand (with a playful face-scan gender guess for its emoji badge) — each shown with a live label, emoji, and a hand-drawn illustration.',
+    link: 'https://github.com/we3005/Hello-Webcam',
+    media: '',
+  },
+  'video-converter': {
+    dot: '2',
+    title: 'Video Converter',
+    desc: 'Turns YouTube, Instagram, or TikTok links into MP3, MP4, WAV, FLAC, OPUS, WEBM, or MKV files. Built in Python with github user we3005.',
+    link: 'https://github.com/eungyeolhan/Video-Converter',
+    media: '<img src="assets/video-converter.png" alt="Video Converter app screenshot">',
+  },
+  'economic-shock': {
+    dot: '3',
+    title: 'Economic Shock Simulator',
+    desc: 'A graph-based simulator that models economic shocks with a custom dashboard UI. Built in Python for a school project.',
+    link: 'https://github.com/Tabel0112/CSC111-Project-2',
+    media: '',
+  },
+};
 
-/* ---- sticky nav bar (single block) ---- */
-.nav-bar {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: var(--hud);
-  border-bottom: 4px solid var(--deep);
-  padding: 0.75rem 1rem;
-  margin-top: 1.75rem;
+const projectModalOverlay = document.getElementById('projectModalOverlay');
+const projectModalClose = document.getElementById('projectModalClose');
+const projectModalDot = document.getElementById('projectModalDot');
+const projectModalTitle = document.getElementById('projectModalTitle');
+const projectModalDesc = document.getElementById('projectModalDesc');
+const projectModalMedia = document.getElementById('projectModalMedia');
+const projectModalLink = document.getElementById('projectModalLink');
+
+function openProjectModal(key) {
+  const data = projectData[key];
+  if (!data) return;
+  projectModalDot.textContent = data.dot;
+  projectModalTitle.textContent = data.title;
+  projectModalDesc.textContent = data.desc;
+  if (data.media) {
+    projectModalMedia.innerHTML = data.media;
+    projectModalMedia.style.display = '';
+  } else {
+    projectModalMedia.innerHTML = '';
+    projectModalMedia.style.display = 'none';
+  }
+  if (data.link) {
+    projectModalLink.href = data.link;
+    projectModalLink.style.display = '';
+  } else {
+    projectModalLink.style.display = 'none';
+  }
+  projectModalOverlay.classList.add('show');
 }
-
-/* ---- nav: question blocks ---- */
-nav.qblocks { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.6rem; }
-nav.qblocks a, .theme-toggle {
-  font-family: 'Press Start 2P', cursive;
-  font-size: 0.55rem;
-  text-decoration: none;
-  color: var(--ink);
-  background: var(--mid);
-  border: 3px solid var(--ink);
-  box-shadow: inset 3px 3px 0 rgba(255,255,255,0.5), inset -3px -3px 0 rgba(0,0,0,0.15);
-  padding: 0.75rem 0.9rem;
-  cursor: pointer;
-  transition: transform 0.1s ease;
-}
-nav.qblocks a:hover, .theme-toggle:hover { transform: translateY(-4px); background: var(--deep); }
-nav.qblocks a:active, .theme-toggle:active { transform: translateY(0); }
-nav.qblocks a:focus-visible, .theme-toggle:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.theme-toggle { font-size: 0.8rem; padding: 0.6rem 0.75rem; line-height: 1; }
-
-/* ---- fallback offset for direct links like /#education (nav clicks are handled precisely in script.js) ---- */
-section[id] { scroll-margin-top: 6rem; }
-@media (max-width: 600px) {
-  section[id] { scroll-margin-top: 9rem; }
-}
-
-section h2 { font-family: 'Press Start 2P', cursive; font-size: 0.9rem; margin-bottom: 1.2rem; color: var(--ink); }
-section h2::before { content: "▸ "; color: var(--deep); }
-
-.note {
-  color: var(--muted);
-  border: 3px dashed var(--deep);
-  padding: 0.9rem 1.1rem;
-  font-size: 1.15rem;
-  background: rgba(255,255,255,0.35);
-}
-
-/* ---- skills: item blocks (color highlight only, no sound) ---- */
-.skill-group { margin-bottom: 1.5rem; }
-.skill-group:last-child { margin-bottom: 0; }
-.skill-group h3 { font-family: 'Press Start 2P', cursive; font-size: 0.6rem; color: var(--muted); margin-bottom: 0.8rem; }
-.item-row { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-.item {
-  font-family: 'Press Start 2P', cursive;
-  font-size: 0.5rem;
-  border: 3px solid var(--ink);
-  background: var(--mid);
-  box-shadow: inset 2px 2px 0 rgba(255,255,255,0.5), inset -2px -2px 0 rgba(0,0,0,0.15);
-  padding: 0.6rem 0.7rem;
-  color: var(--ink);
-  cursor: pointer;
-  transition: background 0.1s ease, box-shadow 0.1s ease;
-}
-.item:hover {
-  background: var(--deep);
-  box-shadow: inset 2px 2px 0 rgba(255,255,255,0.35), inset -2px -2px 0 rgba(0,0,0,0.25);
+function closeProjectModal() {
+  projectModalOverlay.classList.remove('show');
 }
 
-/* ---- education ---- */
-.edu-entry { margin-bottom: 1.5rem; }
-.edu-entry h3 {
-  font-family: 'Press Start 2P', cursive;
-  font-size: 0.72rem;
-  line-height: 1.5;
-  color: var(--ink);
-  margin-bottom: 0.6rem;
-}
-.edu-entry .edu-school { color: var(--ink); }
+document.querySelectorAll('[data-project]').forEach((card) => {
+  if (card.dataset.project === 'mystery-game') {
+    card.addEventListener('click', triggerMysteryGlitch);
+  } else {
+    card.addEventListener('click', () => openProjectModal(card.dataset.project));
+  }
+});
+projectModalClose.addEventListener('click', closeProjectModal);
+projectModalOverlay.addEventListener('click', (e) => {
+  if (e.target === projectModalOverlay) closeProjectModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeProjectModal();
+});
 
-/* ---- projects: one big block wraps the whole grid (pops like the other sections) ---- */
-.projects-wrap { margin-top: 2rem; }
+// ---- mystery game "??? " easter egg: a burst of fake 404 error windows,
+// one at a time, that all vanish together and get replaced by a single
+// "Coming Soon ........." window ----
+const MYSTERY_ERROR_COUNT = 5;
+const MYSTERY_SPAWN_DELAY_MS = 320;   // gap between each error window appearing
+const MYSTERY_HOLD_MS = 1000;         // how long they all sit on screen together
+let mysteryGlitchRunning = false;
 
-.project-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
-}
-/* individual project cards: separate hover animation (tilt + grow) instead of the pop-up used elsewhere */
-.project-card {
-  margin-top: 0;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.project-card:hover {
-  transform: scale(1.045) rotate(-1.2deg);
-  box-shadow:
-    inset 4px 4px 0 rgba(255,255,255,0.5),
-    inset -4px -4px 0 rgba(0,0,0,0.15),
-    9px 9px 0 var(--deep);
-}
-.project-card:active {
-  transform: scale(1) rotate(0deg);
-  box-shadow:
-    inset 4px 4px 0 rgba(255,255,255,0.5),
-    inset -4px -4px 0 rgba(0,0,0,0.15),
-    6px 6px 0 var(--deep);
-}
-.project-block {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.6rem;
-  text-align: left;
-  margin-top: 0;
-  font-family: inherit;
-  color: inherit;
-  cursor: pointer;
-  width: 100%;
-}
-.project-block .dot {
-  width: 40px;
-  height: 40px;
-  background: var(--mid);
-  border: 3px solid var(--ink);
-  box-shadow: inset 3px 3px 0 rgba(255,255,255,0.5), inset -3px -3px 0 rgba(0,0,0,0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Press Start 2P', cursive;
-  font-size: 0.65rem;
-  flex-shrink: 0;
-}
-.project-block h3 {
-  font-family: 'Press Start 2P', cursive;
-  font-size: 0.72rem;
-  color: var(--ink);
-}
-.project-block p {
-  font-size: 1.05rem;
-  color: var(--muted);
+function makeMysteryWindow(x, y, { title, body, variant = 'error' }) {
+  const win = document.createElement('div');
+  win.className = 'mystery-window' + (variant === 'comingsoon' ? ' comingsoon' : '');
+  win.style.left = x + 'px';
+  win.style.top = y + 'px';
+  win.innerHTML =
+    '<div class="mystery-window-bar"><span>' + title + '</span><span class="mystery-window-x">✕</span></div>' +
+    '<div class="mystery-window-body">' + body + '</div>';
+  document.body.appendChild(win);
+  return win;
 }
 
-/* ---- contact: power-up badges ---- */
-.badge-row { display: flex; flex-wrap: wrap; gap: 0.9rem; justify-content: center; }
-.badge { text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; width: 68px; }
-.badge .circle {
-  width: 46px;
-  height: 46px;
-  background: var(--badge-bg);
-  border: 3px solid var(--ink);
-  box-shadow: inset 3px 3px 0 rgba(255,255,255,0.15), inset -3px -3px 0 rgba(0,0,0,0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.1s ease;
-}
-.badge:hover .circle { transform: translateY(-3px); }
-.badge .circle svg { width: 22px; height: 22px; stroke: var(--badge-fg); fill: none; }
-.badge .label { font-family: 'Press Start 2P', cursive; font-size: 0.42rem; color: var(--muted); text-align: center; }
+function triggerMysteryGlitch() {
+  if (mysteryGlitchRunning) return;
+  mysteryGlitchRunning = true;
 
-footer { text-align: center; margin-top: 2.5rem; }
-.press-start {
-  font-family: 'Press Start 2P', cursive;
-  font-size: 0.6rem;
-  color: var(--deep);
-  animation: blink 1s step-end infinite;
-}
-@keyframes blink { 50% { opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .press-start { animation: none; } }
+  const windows = [];
+  const margin = 40;
 
-@media (max-width: 600px) {
-  .hero h1 { font-size: 1.15rem; }
-  .block { padding: 1.3rem; }
-}
+  for (let i = 0; i < MYSTERY_ERROR_COUNT; i++) {
+    setTimeout(() => {
+      const maxX = Math.max(window.innerWidth - 240 - margin, margin);
+      const maxY = Math.max(window.innerHeight - 140 - margin, margin);
+      const x = margin + Math.random() * (maxX - margin);
+      const y = margin + Math.random() * (maxY - margin);
+      windows.push(makeMysteryWindow(x, y, {
+        title: 'Error',
+        body: '404 - Not Found',
+        variant: 'error',
+      }));
+    }, i * MYSTERY_SPAWN_DELAY_MS);
+  }
 
-/* ---- mystery mascot sprite, bottom-left of the screen ---- */
-.mc-sprite {
-  position: fixed;
-  bottom: 40px;
-  left: 16px;
-  z-index: 60;
-  cursor: pointer;
-}
-/* floating animation only plays while she's walking (hover/focus) — she stands still on the ground otherwise */
-.mc-sprite.walking {
-  animation: mc-float 2.4s ease-in-out infinite;
-}
-@keyframes mc-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-22px); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .mc-sprite.walking { animation: none; }
-}
-.mc-sprite:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
-.mc-sprite img {
-  display: block;
-  width: 66px;
-  height: auto;
-  image-rendering: pixelated;
-  transform-origin: bottom center;
-  transition: transform 0.2s ease;
-}
-.mc-sprite:hover img,
-.mc-sprite:focus-visible img {
-  transform: scale(1.12);
+  setTimeout(() => {
+    windows.forEach((w) => w.remove());
+
+    const comingSoon = makeMysteryWindow(
+      window.innerWidth / 2 - 130,
+      window.innerHeight / 2 - 60,
+      { title: 'System', body: 'Coming Soon .........', variant: 'comingsoon' }
+    );
+    const closeIt = () => {
+      comingSoon.remove();
+      mysteryGlitchRunning = false;
+    };
+    comingSoon.querySelector('.mystery-window-x').addEventListener('click', closeIt);
+    comingSoon.addEventListener('click', closeIt);
+  }, MYSTERY_ERROR_COUNT * MYSTERY_SPAWN_DELAY_MS + MYSTERY_HOLD_MS);
 }
 
-/* speech bubble: up and well to the right of her, not centered over her head */
-.mc-speech {
-  position: absolute;
-  left: 100%;
-  bottom: calc(100% + 26px);
-  margin-left: 12px;
-  transform: translateY(8px);
-  background: var(--panel);
-  border: 3px solid var(--ink);
-  box-shadow: inset 2px 2px 0 rgba(255,255,255,0.5), inset -2px -2px 0 rgba(0,0,0,0.15);
-  padding: 0.6rem 0.8rem;
-  font-family: 'Press Start 2P', cursive;
-  font-size: 0.45rem;
-  line-height: 1.4;
-  color: var(--ink);
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease, transform 0.25s ease;
+// ---- mystery mascot sprite (bottom-left) ----
+const mcSprite = document.getElementById('mcSprite');
+const mcImg = document.getElementById('mcImg');
+const mcSpeech = document.getElementById('mcSpeech');
+const mcModalOverlay = document.getElementById('mcModalOverlay');
+const mcModalOk = document.getElementById('mcModalOk');
+
+const mcWalkFrames = ['assets/river_standing2.png', 'assets/river_standing3.png'];
+let mcWalkFrameIndex = 0;
+let mcWalkTimer = null;
+let mcSpeechTimer = null;
+
+function mcStartWalking() {
+  mcSprite.classList.add('walking'); // only float while actually walking
+  mcWalkFrameIndex = 0;
+  mcWalkTimer = setInterval(() => {
+    mcImg.src = mcWalkFrames[mcWalkFrameIndex % mcWalkFrames.length];
+    mcWalkFrameIndex++;
+  }, 260);
 }
-.mc-speech::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 18px;
-  border: 6px solid transparent;
-  border-top-color: var(--ink);
-}
-.mc-speech.show {
-  opacity: 1;
-  transform: translateY(0);
+function mcStopWalking() {
+  clearInterval(mcWalkTimer);
+  mcWalkTimer = null;
+  mcImg.src = 'assets/river_standing.png';
+  mcSprite.classList.remove('walking'); // stand still, feet on the ground
 }
 
-/* ---- project detail popup: centered on screen ---- */
-.project-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(20, 12, 30, 0.6);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 110;
-  padding: 1.25rem;
+function mcPopSpeech() {
+  mcSpeech.classList.add('show');
+  setTimeout(() => mcSpeech.classList.remove('show'), 2200);
 }
-.project-modal-overlay.show { display: flex; }
-.project-modal {
-  position: relative;
-  max-width: 560px;
-  width: 100%;
-  max-height: 85vh;
-  overflow-y: auto;
-  margin-top: 0;
-  text-align: left;
+function mcStartSpeechLoop() {
+  mcPopSpeech();
+  mcSpeechTimer = setInterval(mcPopSpeech, 4500);
 }
-.project-modal-close {
-  position: absolute;
-  top: 0.9rem;
-  right: 0.9rem;
-  font-family: 'Press Start 2P', cursive;
-  font-size: 0.6rem;
-  background: var(--mid);
-  color: var(--ink);
-  border: 3px solid var(--ink);
-  box-shadow: inset 2px 2px 0 rgba(255,255,255,0.5), inset -2px -2px 0 rgba(0,0,0,0.15);
-  width: 32px;
-  height: 32px;
-  cursor: pointer;
+function mcStopSpeechLoop() {
+  clearInterval(mcSpeechTimer);
+  mcSpeechTimer = null;
+  mcSpeech.classList.remove('show');
 }
-.project-modal-close:hover { background: var(--deep); }
-.project-modal-dot {
-  width: 44px;
-  height: 44px;
-  background: var(--mid);
-  border: 3px solid var(--ink);
-  box-shadow: inset 3px 3px 0 rgba(255,255,255,0.5), inset -3px -3px 0 rgba(0,0,0,0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Press Start 2P', cursive;
-  font-size: 0.7rem;
-  margin-bottom: 1rem;
-}
-.project-modal h3 {
-  font-family: 'Press Start 2P', cursive;
-  font-size: 0.95rem;
-  margin-bottom: 1.1rem;
-  color: var(--ink);
-  padding-right: 2.5rem;
-}
-.project-modal-media {
-  width: 100%;
-  min-height: 180px;
-  background: rgba(0,0,0,0.12);
-  border: 3px dashed var(--deep);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1.1rem;
-  overflow: hidden;
-}
-.project-modal-media img,
-.project-modal-media video {
-  display: block;
-  max-width: 100%;
-  max-height: 320px;
-}
-.project-media-placeholder {
-  font-size: 1rem;
-  color: var(--muted);
-  text-align: center;
-  padding: 1rem;
-}
-.project-modal p {
-  font-size: 1.15rem;
-  color: var(--muted);
-  margin-bottom: 1.2rem;
-}
-.project-modal-link {
-  display: inline-block;
-  font-family: 'Press Start 2P', cursive;
-  font-size: 0.55rem;
-  text-decoration: none;
-  color: var(--ink);
-  background: var(--mid);
-  border: 3px solid var(--ink);
-  box-shadow: inset 3px 3px 0 rgba(255,255,255,0.5), inset -3px -3px 0 rgba(0,0,0,0.15);
-  padding: 0.75rem 0.9rem;
-}
-.project-modal-link:hover { background: var(--deep); }
 
-/* ---- redirect popup: centered on screen ---- */
-.mc-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(20, 12, 30, 0.55);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  padding: 1rem;
+function mcOpenModal() {
+  mcModalOverlay.classList.add('show');
 }
-.mc-modal-overlay.show { display: flex; }
-.mc-modal {
-  background: var(--panel);
-  border: 4px solid var(--ink);
-  box-shadow:
-    inset 4px 4px 0 rgba(255,255,255,0.5),
-    inset -4px -4px 0 rgba(0,0,0,0.15),
-    6px 6px 0 var(--deep);
-  padding: 1.6rem;
-  max-width: 300px;
-  text-align: center;
+function mcCloseModal() {
+  mcModalOverlay.classList.remove('show');
 }
-.mc-modal p {
-  font-size: 1.1rem;
-  color: var(--ink);
-  margin-bottom: 1.2rem;
-}
-.mc-modal-buttons { display: flex; justify-content: center; }
 
-@media (max-width: 600px) {
-  .mc-sprite img { width: 56px; }
+mcSprite.addEventListener('mouseenter', () => {
+  mcStartWalking();
+  mcStartSpeechLoop();
+});
+mcSprite.addEventListener('mouseleave', () => {
+  mcStopWalking();
+  mcStopSpeechLoop();
+});
+mcSprite.addEventListener('click', mcOpenModal);
+mcSprite.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    mcOpenModal();
+  }
+});
+mcModalOk.addEventListener('click', () => {
+  window.location.href = 'https://viaxshan.github.io/';
+});
+mcModalOverlay.addEventListener('click', (e) => {
+  if (e.target === mcModalOverlay) mcCloseModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') mcCloseModal();
+});
+
+// ---- PRESS START TO CONTINUE bumps the heart count ----
+const pressStart = document.getElementById('pressStart');
+const heartCount = document.getElementById('heartCount');
+if (pressStart && heartCount) {
+  pressStart.addEventListener('click', (e) => {
+    e.preventDefault(); // stay on the page so the heart bump is visible instead of navigating away
+    const current = parseInt(heartCount.textContent.replace('×', ''), 10) || 0;
+    heartCount.textContent = '×' + (current + 1);
+  });
 }
+
+// ---- nav links: scroll so the section's header sits just below the sticky nav ----
+const navBar = document.querySelector('.nav-bar');
+document.querySelectorAll('nav.qblocks a[href^="#"]').forEach((link) => {
+  link.addEventListener('click', (e) => {
+    const target = document.querySelector(link.getAttribute('href'));
+    if (!target || !navBar) return;
+    e.preventDefault();
+    const gap = 16; // breathing room between the nav bar and the section's top edge
+    const top = target.getBoundingClientRect().top + window.scrollY - navBar.offsetHeight - gap;
+    window.scrollTo({ top, behavior: reduceMotion ? 'auto' : 'smooth' });
+  });
+});
