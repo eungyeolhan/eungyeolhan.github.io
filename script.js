@@ -61,6 +61,79 @@ if (!reduceMotion) {
   });
 }
 
+// ---- project detail modal ----
+// To add photos/videos later: drop <img> or <video> tags straight into
+// the relevant project's `media` string below (the placeholder text
+// disappears automatically once media is non-empty).
+const projectData = {
+  'video-converter': {
+    dot: '1',
+    title: 'Video Converter',
+    desc: 'Turns YouTube, Instagram, or TikTok links into MP3, MP4, WAV, FLAC, OPUS, WEBM, or MKV files. Built in Python with github user we3005.',
+    link: 'https://github.com/eungyeolhan/Video-Converter',
+    media: '',
+  },
+  'economic-shock': {
+    dot: '2',
+    title: 'Economic Shock Simulator',
+    desc: 'A graph-based simulator that models economic shocks with a custom dashboard UI. Built in Python for a school project.',
+    link: 'https://github.com/Tabel0112/CSC111-Project-2',
+    media: '',
+  },
+  'hello-webcam': {
+    dot: '3',
+    title: 'Hello Webcam!',
+    desc: 'A real-time hand gesture recognition tool built with OpenCV and MediaPipe. Recognizes gestures like thumbs up, peace sign, OK sign, prayer hands, waving, and a raised hand (with a playful face-scan gender guess for its emoji badge) — each shown with a live label, emoji, and a hand-drawn illustration.',
+    link: 'https://github.com/we3005/Hello-Webcam',
+    media: '',
+  },
+  'mystery-game': {
+    dot: '?',
+    title: '???',
+    desc: 'Mystery/detective 2D game — in progress. More details coming soon!',
+    link: '',
+    media: '',
+  },
+};
+
+const projectModalOverlay = document.getElementById('projectModalOverlay');
+const projectModalClose = document.getElementById('projectModalClose');
+const projectModalDot = document.getElementById('projectModalDot');
+const projectModalTitle = document.getElementById('projectModalTitle');
+const projectModalDesc = document.getElementById('projectModalDesc');
+const projectModalMedia = document.getElementById('projectModalMedia');
+const projectModalLink = document.getElementById('projectModalLink');
+
+function openProjectModal(key) {
+  const data = projectData[key];
+  if (!data) return;
+  projectModalDot.textContent = data.dot;
+  projectModalTitle.textContent = data.title;
+  projectModalDesc.textContent = data.desc;
+  projectModalMedia.innerHTML = data.media || '<span class="project-media-placeholder">screenshots / video coming soon</span>';
+  if (data.link) {
+    projectModalLink.href = data.link;
+    projectModalLink.style.display = '';
+  } else {
+    projectModalLink.style.display = 'none';
+  }
+  projectModalOverlay.classList.add('show');
+}
+function closeProjectModal() {
+  projectModalOverlay.classList.remove('show');
+}
+
+document.querySelectorAll('[data-project]').forEach((card) => {
+  card.addEventListener('click', () => openProjectModal(card.dataset.project));
+});
+projectModalClose.addEventListener('click', closeProjectModal);
+projectModalOverlay.addEventListener('click', (e) => {
+  if (e.target === projectModalOverlay) closeProjectModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeProjectModal();
+});
+
 // ---- mystery mascot sprite (bottom-left) ----
 const mcSprite = document.getElementById('mcSprite');
 const mcImg = document.getElementById('mcImg');
