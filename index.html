@@ -92,21 +92,26 @@
       <div class="block interactive projects-wrap">
         <h2>projects</h2>
         <div class="project-grid">
-          <a href="https://github.com/eungyeolhan/Video-Converter" target="_blank" rel="noopener" class="block project-card project-block" style="text-decoration:none;color:inherit;">
+          <button type="button" class="block project-card project-block" data-project="video-converter">
             <div class="dot">1</div>
             <h3>Video Converter</h3>
             <p>Turns YouTube, Instagram, or TikTok links into MP3, MP4, WAV, FLAC, OPUS, WEBM, or MKV files. Built in Python with github user we3005.</p>
-          </a>
-          <a href="https://github.com/Tabel0112/CSC111-Project-2" target="_blank" rel="noopener" class="block project-card project-block" style="text-decoration:none;color:inherit;">
+          </button>
+          <button type="button" class="block project-card project-block" data-project="economic-shock">
             <div class="dot">2</div>
             <h3>Economic Shock Simulator</h3>
             <p>A graph-based simulator that models economic shocks with a custom dashboard UI. Built in Python for a school project.</p>
-          </a>
-          <div class="block project-card project-block">
+          </button>
+          <button type="button" class="block project-card project-block" data-project="hello-webcam">
+            <div class="dot">3</div>
+            <h3>Hello Webcam!</h3>
+            <p>A real-time webcam gesture recognizer (OpenCV + MediaPipe) that reads hand landmarks to detect gestures like a thumbs up, peace sign, and waving, each with its own emoji badge and hand-drawn illustration.</p>
+          </button>
+          <button type="button" class="block project-card project-block" data-project="mystery-game">
             <div class="dot">?</div>
             <h3>???</h3>
             <p>Mystery/detective 2D game — in progress. More details coming soon!</p>
-          </div>
+          </button>
         </div>
       </div>
     </section>
@@ -158,6 +163,19 @@
   <div id="mcSprite" class="mc-sprite" role="button" tabindex="0" aria-label="mystery detective character">
     <div class="mc-speech" id="mcSpeech">detective game coming soon!</div>
     <img src="river_standing.png" alt="pixel art detective girl mascot" id="mcImg">
+  </div>
+
+  <div class="project-modal-overlay" id="projectModalOverlay">
+    <div class="project-modal block">
+      <button type="button" class="project-modal-close" id="projectModalClose" aria-label="close">✕</button>
+      <div class="project-modal-dot" id="projectModalDot">1</div>
+      <h3 id="projectModalTitle">Title</h3>
+      <div class="project-modal-media" id="projectModalMedia">
+        <span class="project-media-placeholder">screenshots / video coming soon</span>
+      </div>
+      <p id="projectModalDesc">Description</p>
+      <a id="projectModalLink" class="project-modal-link" href="#" target="_blank" rel="noopener">view on github &rarr;</a>
+    </div>
   </div>
 
   <div class="mc-modal-overlay" id="mcModalOverlay">
