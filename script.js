@@ -146,26 +146,31 @@ const MYSTERY_SPAWN_DELAY_MS = 45;    // gap between each error window appearing
 const MYSTERY_HOLD_MS = 500;          // how long they all sit on screen together
 const MYSTERY_WINDOW_W = 280;         // approx. window footprint, for coverage math
 const MYSTERY_WINDOW_H = 170;
-const MYSTERY_COMINGSOON_MS = 5000;   // how long "Coming Soon" stays up before it vanishes
+const MYSTERY_COMINGSOON_MS = 2000;   // how long "Coming Soon" stays up before it vanishes
 let mysteryGlitchRunning = false;
 
 function playMysteryBeep() {
   try {
     const ctx = ensureAudioCtx();
     const t0 = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'square';
-    // classic descending "error" blip
-    osc.frequency.setValueAtTime(700, t0);
-    osc.frequency.exponentialRampToValueAtTime(220, t0 + 0.09);
-    gain.gain.setValueAtTime(0.0001, t0);
-    gain.gain.exponentialRampToValueAtTime(0.06, t0 + 0.01);
-    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.1);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(t0);
-    osc.stop(t0 + 0.11);
+    const dur = 0.16;
+
+    // two slightly-detuned oscillators sweeping down together = a harsh
+    // "access denied" buzzer, rather than a clean single-tone blip
+    [1, 1.02].forEach((detune) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(380 * detune, t0);
+      osc.frequency.exponentialRampToValueAtTime(110 * detune, t0 + dur);
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(0.05, t0 + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t0);
+      osc.stop(t0 + dur + 0.02);
+    });
   } catch (err) {
     // audio isn't essential to the gag; fail silently
   }
@@ -213,12 +218,32 @@ function triggerMysteryGlitch() {
   setTimeout(() => {
     windows.forEach((w) => w.remove());
 
+    // land slightly off-center rather than dead-center, like it didn't
+    // quite land right
+    const offsetX = (Math.random() - 0.5) * 60;
+    const offsetY = (Math.random() - 0.5) * 40;
     const comingSoon = makeMysteryWindow(
-      window.innerWidth / 2 - 190,
-      window.innerHeight / 2 - 90,
+      window.innerWidth / 2 - 190 + offsetX,
+      window.innerHeight / 2 - 90 + offsetY,
       { title: 'System', body: 'Coming Soon .........', variant: 'comingsoon' }
     );
     comingSoon.classList.add('glitching');
+
+    // a handful of small broken-pixel slivers that flicker on and off,
+    // rather than the whole window shaking
+    const glitchColors = ['#ff2fd6', '#2fe4ff', '#ffffff', '#6a1fb0'];
+    for (let i = 0; i < 6; i++) {
+      const bit = document.createElement('div');
+      bit.className = 'mystery-glitch-bit';
+      bit.style.left = Math.random() * 90 + '%';
+      bit.style.top = Math.random() * 85 + '%';
+      bit.style.width = 10 + Math.random() * 34 + 'px';
+      bit.style.height = 3 + Math.random() * 6 + 'px';
+      bit.style.background = glitchColors[Math.floor(Math.random() * glitchColors.length)];
+      bit.style.animationDelay = (Math.random() * 1.4).toFixed(2) + 's';
+      bit.style.animationDuration = (0.35 + Math.random() * 0.4).toFixed(2) + 's';
+      comingSoon.appendChild(bit);
+    }
 
     let closed = false;
     const closeIt = () => {
