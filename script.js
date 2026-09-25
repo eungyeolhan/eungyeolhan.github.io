@@ -71,7 +71,7 @@ const projectData = {
     title: 'Video Converter',
     desc: 'Turns YouTube, Instagram, or TikTok links into MP3, MP4, WAV, FLAC, OPUS, WEBM, or MKV files. Built in Python with github user we3005.',
     link: 'https://github.com/eungyeolhan/Video-Converter',
-    media: '',
+    media: '<img src="video-converter.png" alt="Video Converter app screenshot">',
   },
   'economic-shock': {
     dot: '2',
@@ -110,7 +110,13 @@ function openProjectModal(key) {
   projectModalDot.textContent = data.dot;
   projectModalTitle.textContent = data.title;
   projectModalDesc.textContent = data.desc;
-  projectModalMedia.innerHTML = data.media || '<span class="project-media-placeholder">screenshots / video coming soon</span>';
+  if (data.media) {
+    projectModalMedia.innerHTML = data.media;
+    projectModalMedia.style.display = '';
+  } else {
+    projectModalMedia.innerHTML = '';
+    projectModalMedia.style.display = 'none';
+  }
   if (data.link) {
     projectModalLink.href = data.link;
     projectModalLink.style.display = '';
