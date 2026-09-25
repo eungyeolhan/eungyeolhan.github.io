@@ -139,12 +139,37 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ---- mystery game "??? " easter egg: a burst of fake 404 error windows,
-// one at a time, that all vanish together and get replaced by a single
-// "Coming Soon ........." window ----
-const MYSTERY_ERROR_COUNT = 5;
-const MYSTERY_SPAWN_DELAY_MS = 320;   // gap between each error window appearing
-const MYSTERY_HOLD_MS = 1000;         // how long they all sit on screen together
+// fast and dense enough to blanket the page, each with a little error
+// blip, that all vanish together and get replaced by a bigger glitching
+// "Coming Soon ........." window that disappears on its own ----
+const MYSTERY_SPAWN_DELAY_MS = 45;    // gap between each error window appearing (fast)
+const MYSTERY_HOLD_MS = 500;          // how long they all sit on screen together
+const MYSTERY_WINDOW_W = 280;         // approx. window footprint, for coverage math
+const MYSTERY_WINDOW_H = 170;
+const MYSTERY_COMINGSOON_MS = 5000;   // how long "Coming Soon" stays up before it vanishes
 let mysteryGlitchRunning = false;
+
+function playMysteryBeep() {
+  try {
+    const ctx = ensureAudioCtx();
+    const t0 = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'square';
+    // classic descending "error" blip
+    osc.frequency.setValueAtTime(700, t0);
+    osc.frequency.exponentialRampToValueAtTime(220, t0 + 0.09);
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.exponentialRampToValueAtTime(0.06, t0 + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.1);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + 0.11);
+  } catch (err) {
+    // audio isn't essential to the gag; fail silently
+  }
+}
 
 function makeMysteryWindow(x, y, { title, body, variant = 'error' }) {
   const win = document.createElement('div');
@@ -163,19 +188,25 @@ function triggerMysteryGlitch() {
   mysteryGlitchRunning = true;
 
   const windows = [];
-  const margin = 40;
+  const margin = 30;
+  // enough windows (with overlap) to blanket the current viewport
+  const errorCount = Math.min(
+    70,
+    Math.max(24, Math.ceil((window.innerWidth * window.innerHeight) / (MYSTERY_WINDOW_W * MYSTERY_WINDOW_H) * 1.6))
+  );
 
-  for (let i = 0; i < MYSTERY_ERROR_COUNT; i++) {
+  for (let i = 0; i < errorCount; i++) {
     setTimeout(() => {
-      const maxX = Math.max(window.innerWidth - 240 - margin, margin);
-      const maxY = Math.max(window.innerHeight - 140 - margin, margin);
-      const x = margin + Math.random() * (maxX - margin);
-      const y = margin + Math.random() * (maxY - margin);
+      const maxX = Math.max(window.innerWidth - MYSTERY_WINDOW_W + margin, margin);
+      const maxY = Math.max(window.innerHeight - MYSTERY_WINDOW_H + margin, margin);
+      const x = -margin + Math.random() * (maxX + margin);
+      const y = -margin + Math.random() * (maxY + margin);
       windows.push(makeMysteryWindow(x, y, {
         title: 'Error',
         body: '404 - Not Found',
         variant: 'error',
       }));
+      playMysteryBeep();
     }, i * MYSTERY_SPAWN_DELAY_MS);
   }
 
@@ -183,17 +214,23 @@ function triggerMysteryGlitch() {
     windows.forEach((w) => w.remove());
 
     const comingSoon = makeMysteryWindow(
-      window.innerWidth / 2 - 130,
-      window.innerHeight / 2 - 60,
+      window.innerWidth / 2 - 190,
+      window.innerHeight / 2 - 90,
       { title: 'System', body: 'Coming Soon .........', variant: 'comingsoon' }
     );
+    comingSoon.classList.add('glitching');
+
+    let closed = false;
     const closeIt = () => {
+      if (closed) return;
+      closed = true;
       comingSoon.remove();
       mysteryGlitchRunning = false;
     };
     comingSoon.querySelector('.mystery-window-x').addEventListener('click', closeIt);
     comingSoon.addEventListener('click', closeIt);
-  }, MYSTERY_ERROR_COUNT * MYSTERY_SPAWN_DELAY_MS + MYSTERY_HOLD_MS);
+    setTimeout(closeIt, MYSTERY_COMINGSOON_MS);
+  }, errorCount * MYSTERY_SPAWN_DELAY_MS + MYSTERY_HOLD_MS);
 }
 
 // ---- mystery mascot sprite (bottom-left) ----
