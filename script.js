@@ -62,36 +62,30 @@ if (!reduceMotion) {
 }
 
 // ---- project detail modal ----
-// To add photos/videos later: drop <img> or <video> tags straight into
-// the relevant project's `media` string below (the placeholder text
-// disappears automatically once media is non-empty).
+// To add photos/videos later: drop an <img> or <video> tag (pointing at a
+// file in assets/) into the relevant project's `media` string below. The
+// media box sizes itself to whatever you put in it, and is skipped
+// entirely (no empty box) when `media` is left as ''.
 const projectData = {
-  'video-converter': {
-    dot: '1',
-    title: 'Video Converter',
-    desc: 'Turns YouTube, Instagram, or TikTok links into MP3, MP4, WAV, FLAC, OPUS, WEBM, or MKV files. Built in Python with github user we3005.',
-    link: 'https://github.com/eungyeolhan/Video-Converter',
-    media: '<img src="video-converter.png" alt="Video Converter app screenshot">',
-  },
-  'economic-shock': {
-    dot: '2',
-    title: 'Economic Shock Simulator',
-    desc: 'A graph-based simulator that models economic shocks with a custom dashboard UI. Built in Python for a school project.',
-    link: 'https://github.com/Tabel0112/CSC111-Project-2',
-    media: '',
-  },
   'hello-webcam': {
-    dot: '3',
+    dot: '1',
     title: 'Hello Webcam!',
     desc: 'A real-time hand gesture recognition tool built with OpenCV and MediaPipe. Recognizes gestures like thumbs up, peace sign, OK sign, prayer hands, waving, and a raised hand (with a playful face-scan gender guess for its emoji badge) — each shown with a live label, emoji, and a hand-drawn illustration.',
     link: 'https://github.com/we3005/Hello-Webcam',
     media: '',
   },
-  'mystery-game': {
-    dot: '?',
-    title: '???',
-    desc: 'Mystery/detective 2D game — in progress. More details coming soon!',
-    link: '',
+  'video-converter': {
+    dot: '2',
+    title: 'Video Converter',
+    desc: 'Turns YouTube, Instagram, or TikTok links into MP3, MP4, WAV, FLAC, OPUS, WEBM, or MKV files. Built in Python with github user we3005.',
+    link: 'https://github.com/eungyeolhan/Video-Converter',
+    media: '<img src="assets/video-converter.png" alt="Video Converter app screenshot">',
+  },
+  'economic-shock': {
+    dot: '3',
+    title: 'Economic Shock Simulator',
+    desc: 'A graph-based simulator that models economic shocks with a custom dashboard UI. Built in Python for a school project.',
+    link: 'https://github.com/Tabel0112/CSC111-Project-2',
     media: '',
   },
 };
@@ -130,7 +124,11 @@ function closeProjectModal() {
 }
 
 document.querySelectorAll('[data-project]').forEach((card) => {
-  card.addEventListener('click', () => openProjectModal(card.dataset.project));
+  if (card.dataset.project === 'mystery-game') {
+    card.addEventListener('click', triggerMysteryGlitch);
+  } else {
+    card.addEventListener('click', () => openProjectModal(card.dataset.project));
+  }
 });
 projectModalClose.addEventListener('click', closeProjectModal);
 projectModalOverlay.addEventListener('click', (e) => {
@@ -140,6 +138,64 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeProjectModal();
 });
 
+// ---- mystery game "??? " easter egg: a burst of fake 404 error windows,
+// one at a time, that all vanish together and get replaced by a single
+// "Coming Soon ........." window ----
+const MYSTERY_ERROR_COUNT = 5;
+const MYSTERY_SPAWN_DELAY_MS = 320;   // gap between each error window appearing
+const MYSTERY_HOLD_MS = 1000;         // how long they all sit on screen together
+let mysteryGlitchRunning = false;
+
+function makeMysteryWindow(x, y, { title, body, variant = 'error' }) {
+  const win = document.createElement('div');
+  win.className = 'mystery-window' + (variant === 'comingsoon' ? ' comingsoon' : '');
+  win.style.left = x + 'px';
+  win.style.top = y + 'px';
+  win.innerHTML =
+    '<div class="mystery-window-bar"><span>' + title + '</span><span class="mystery-window-x">✕</span></div>' +
+    '<div class="mystery-window-body">' + body + '</div>';
+  document.body.appendChild(win);
+  return win;
+}
+
+function triggerMysteryGlitch() {
+  if (mysteryGlitchRunning) return;
+  mysteryGlitchRunning = true;
+
+  const windows = [];
+  const margin = 40;
+
+  for (let i = 0; i < MYSTERY_ERROR_COUNT; i++) {
+    setTimeout(() => {
+      const maxX = Math.max(window.innerWidth - 240 - margin, margin);
+      const maxY = Math.max(window.innerHeight - 140 - margin, margin);
+      const x = margin + Math.random() * (maxX - margin);
+      const y = margin + Math.random() * (maxY - margin);
+      windows.push(makeMysteryWindow(x, y, {
+        title: 'Error',
+        body: '404 - Not Found',
+        variant: 'error',
+      }));
+    }, i * MYSTERY_SPAWN_DELAY_MS);
+  }
+
+  setTimeout(() => {
+    windows.forEach((w) => w.remove());
+
+    const comingSoon = makeMysteryWindow(
+      window.innerWidth / 2 - 130,
+      window.innerHeight / 2 - 60,
+      { title: 'System', body: 'Coming Soon .........', variant: 'comingsoon' }
+    );
+    const closeIt = () => {
+      comingSoon.remove();
+      mysteryGlitchRunning = false;
+    };
+    comingSoon.querySelector('.mystery-window-x').addEventListener('click', closeIt);
+    comingSoon.addEventListener('click', closeIt);
+  }, MYSTERY_ERROR_COUNT * MYSTERY_SPAWN_DELAY_MS + MYSTERY_HOLD_MS);
+}
+
 // ---- mystery mascot sprite (bottom-left) ----
 const mcSprite = document.getElementById('mcSprite');
 const mcImg = document.getElementById('mcImg');
@@ -147,7 +203,7 @@ const mcSpeech = document.getElementById('mcSpeech');
 const mcModalOverlay = document.getElementById('mcModalOverlay');
 const mcModalOk = document.getElementById('mcModalOk');
 
-const mcWalkFrames = ['river_standing2.png', 'river_standing3.png'];
+const mcWalkFrames = ['assets/river_standing2.png', 'assets/river_standing3.png'];
 let mcWalkFrameIndex = 0;
 let mcWalkTimer = null;
 let mcSpeechTimer = null;
@@ -163,7 +219,7 @@ function mcStartWalking() {
 function mcStopWalking() {
   clearInterval(mcWalkTimer);
   mcWalkTimer = null;
-  mcImg.src = 'river_standing.png';
+  mcImg.src = 'assets/river_standing.png';
   mcSprite.classList.remove('walking'); // stand still, feet on the ground
 }
 
