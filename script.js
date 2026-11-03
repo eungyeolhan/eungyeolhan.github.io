@@ -62,34 +62,38 @@ if (!reduceMotion) {
 }
 
 // ---- project detail modal ----
-// To add photos/videos later: drop an <img> or <video> tag (pointing at a
-// file in assets/) into the relevant project's `media` string below. The
-// media box sizes itself to whatever you put in it, and is skipped
-// entirely (no empty box) when `media` is left as ''.
+// To add photos/videos later: add an entry (or several) to the relevant
+// project's `media` array below, each as { type: 'img' | 'video', src, alt }.
+// With 0 items the whole media box is skipped. With 1 item it shows as a
+// single still frame (no arrows/dots). With 2+ items it becomes a swipeable
+// one-at-a-time carousel — this is the standard pattern for every project.
 const projectData = {
   'topai': {
     dot: '1',
     title: 'TopAI',
     desc: 'A classroom-style benchmark tool: switch on the API agents you want to compare (OpenAI, Claude, and more), describe a task, and attach a worksheet of questions and answers. TopAI runs every agent against it and scores accuracy, speed, cost, and overall efficiency, with a running chart across repeated quizzes.',
     link: 'https://github.com/ryantrain/TopAI',
-    media:
-      '<img src="assets/Result%20Analysis.png" alt="TopAI results screen comparing OpenAI and Claude agents on accuracy, efficiency, speed and cost">' +
-      '<img src="assets/Prompt%20Customizations.png" alt="TopAI task setup screen with agents switched on and a worksheet attached">' +
-      '<img src="assets/TopAI_Logo.png" alt="TopAI logo">',
+    media: [
+      { type: 'img', src: 'assets/Result%20Analysis.png', alt: 'TopAI results screen comparing OpenAI and Claude agents on accuracy, efficiency, speed and cost' },
+      { type: 'img', src: 'assets/Prompt%20Customizations.png', alt: 'TopAI task setup screen with agents switched on and a worksheet attached' },
+      { type: 'img', src: 'assets/TopAI_Logo.png', alt: 'TopAI logo' },
+    ],
   },
   'hello-webcam': {
     dot: '2',
     title: 'Hello Webcam!',
     desc: 'A real-time hand gesture recognition tool built with OpenCV and MediaPipe. Recognizes gestures like thumbs up, peace sign, OK sign, prayer hands, waving, and a raised hand (with a playful face-scan gender guess for its emoji badge) — each shown with a live label, emoji, and a hand-drawn illustration.',
     link: 'https://github.com/we3005/Hello-Webcam',
-    media: '',
+    media: [],
   },
   'video-converter': {
     dot: '3',
     title: 'Video Converter',
     desc: 'Turns YouTube, Instagram, or TikTok links into MP3, MP4, WAV, FLAC, OPUS, WEBM, or MKV files. Built in Python with github user we3005.',
     link: 'https://github.com/eungyeolhan/Video-Converter',
-    media: '<img src="assets/video-converter.png" alt="Video Converter app screenshot">',
+    media: [
+      { type: 'img', src: 'assets/video-converter.png', alt: 'Video Converter app screenshot' },
+    ],
   },
 };
 
@@ -100,6 +104,64 @@ const projectModalTitle = document.getElementById('projectModalTitle');
 const projectModalDesc = document.getElementById('projectModalDesc');
 const projectModalMedia = document.getElementById('projectModalMedia');
 const projectModalLink = document.getElementById('projectModalLink');
+const mediaFrame = document.getElementById('mediaFrame');
+const mediaPrev = document.getElementById('mediaPrev');
+const mediaNext = document.getElementById('mediaNext');
+const mediaDots = document.getElementById('mediaDots');
+
+let currentMediaItems = [];
+let currentMediaIndex = 0;
+
+function renderMediaFrame() {
+  const item = currentMediaItems[currentMediaIndex];
+  if (!item) {
+    mediaFrame.innerHTML = '';
+    return;
+  }
+  mediaFrame.innerHTML =
+    item.type === 'video'
+      ? '<video src="' + item.src + '" controls playsinline></video>'
+      : '<img src="' + item.src + '" alt="' + (item.alt || '') + '">';
+
+  const multi = currentMediaItems.length > 1;
+  mediaPrev.style.display = multi ? '' : 'none';
+  mediaNext.style.display = multi ? '' : 'none';
+  mediaDots.style.display = multi ? '' : 'none';
+
+  if (multi) {
+    mediaDots.innerHTML = '';
+    currentMediaItems.forEach((_, i) => {
+      const dot = document.createElement('span');
+      dot.className = 'media-dot' + (i === currentMediaIndex ? ' active' : '');
+      dot.addEventListener('click', () => {
+        currentMediaIndex = i;
+        renderMediaFrame();
+      });
+      mediaDots.appendChild(dot);
+    });
+  }
+}
+function showMediaStep(delta) {
+  if (!currentMediaItems.length) return;
+  currentMediaIndex = (currentMediaIndex + delta + currentMediaItems.length) % currentMediaItems.length;
+  renderMediaFrame();
+}
+mediaPrev.addEventListener('click', () => showMediaStep(-1));
+mediaNext.addEventListener('click', () => showMediaStep(1));
+
+// touch-swipe support on the frame itself
+let mediaTouchStartX = null;
+mediaFrame.addEventListener('touchstart', (e) => {
+  mediaTouchStartX = e.changedTouches[0].clientX;
+}, { passive: true });
+mediaFrame.addEventListener('touchend', (e) => {
+  if (mediaTouchStartX === null) return;
+  const dx = e.changedTouches[0].clientX - mediaTouchStartX;
+  mediaTouchStartX = null;
+  const SWIPE_THRESHOLD = 40;
+  if (dx > SWIPE_THRESHOLD) showMediaStep(-1);
+  else if (dx < -SWIPE_THRESHOLD) showMediaStep(1);
+}, { passive: true });
 
 function openProjectModal(key) {
   const data = projectData[key];
@@ -107,13 +169,17 @@ function openProjectModal(key) {
   projectModalDot.textContent = data.dot;
   projectModalTitle.textContent = data.title;
   projectModalDesc.textContent = data.desc;
-  if (data.media) {
-    projectModalMedia.innerHTML = data.media;
+
+  currentMediaItems = data.media || [];
+  currentMediaIndex = 0;
+  if (currentMediaItems.length) {
     projectModalMedia.style.display = '';
+    renderMediaFrame();
   } else {
-    projectModalMedia.innerHTML = '';
     projectModalMedia.style.display = 'none';
+    mediaFrame.innerHTML = '';
   }
+
   if (data.link) {
     projectModalLink.href = data.link;
     projectModalLink.style.display = '';
