@@ -426,12 +426,10 @@ footer { text-align: center; margin-top: 2.5rem; }
 }
 .project-modal-media {
   width: 100%;
-  border: 3px solid var(--ink);
-  background: rgba(0,0,0,0.12);
-  box-shadow: inset 3px 3px 0 rgba(255,255,255,0.3), inset -3px -3px 0 rgba(0,0,0,0.15);
   margin-bottom: 1.1rem;
-  overflow: hidden;
-  line-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
 }
 .project-modal-media img,
 .project-modal-media video {
@@ -440,6 +438,9 @@ footer { text-align: center; margin-top: 2.5rem; }
   height: auto;
   max-height: 65vh;
   object-fit: contain;
+  border: 3px solid var(--ink);
+  background: rgba(0,0,0,0.12);
+  box-shadow: inset 3px 3px 0 rgba(255,255,255,0.3), inset -3px -3px 0 rgba(0,0,0,0.15);
 }
 .project-modal p {
   font-size: 1.15rem;
