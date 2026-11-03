@@ -73,8 +73,8 @@ const projectData = {
     desc: 'A classroom-style benchmark tool: switch on the API agents you want to compare (OpenAI, Claude, and more), describe a task, and attach a worksheet of questions and answers. TopAI runs every agent against it and scores accuracy, speed, cost, and overall efficiency, with a running chart across repeated quizzes.',
     link: 'https://github.com/ryantrain/TopAI',
     media:
-      '<img src="assets/Result_Analysis.png" alt="TopAI results screen comparing OpenAI and Claude agents on accuracy, efficiency, speed and cost">' +
-      '<img src="assets/Prompt_Customizations.png" alt="TopAI task setup screen with agents switched on and a worksheet attached">' +
+      '<img src="assets/Result%20Analysis.png" alt="TopAI results screen comparing OpenAI and Claude agents on accuracy, efficiency, speed and cost">' +
+      '<img src="assets/Prompt%20Customizations.png" alt="TopAI task setup screen with agents switched on and a worksheet attached">' +
       '<img src="assets/TopAI_Logo.png" alt="TopAI logo">',
   },
   'hello-webcam': {
