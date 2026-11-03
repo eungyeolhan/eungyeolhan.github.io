@@ -67,26 +67,29 @@ if (!reduceMotion) {
 // media box sizes itself to whatever you put in it, and is skipped
 // entirely (no empty box) when `media` is left as ''.
 const projectData = {
-  'hello-webcam': {
+  'topai': {
     dot: '1',
+    title: 'TopAI',
+    desc: 'A classroom-style benchmark tool: switch on the API agents you want to compare (OpenAI, Claude, and more), describe a task, and attach a worksheet of questions and answers. TopAI runs every agent against it and scores accuracy, speed, cost, and overall efficiency, with a running chart across repeated quizzes.',
+    link: 'https://github.com/ryantrain/TopAI',
+    media:
+      '<img src="assets/Result_Analysis.png" alt="TopAI results screen comparing OpenAI and Claude agents on accuracy, efficiency, speed and cost">' +
+      '<img src="assets/Prompt_Customizations.png" alt="TopAI task setup screen with agents switched on and a worksheet attached">' +
+      '<img src="assets/TopAI_Logo.png" alt="TopAI logo">',
+  },
+  'hello-webcam': {
+    dot: '2',
     title: 'Hello Webcam!',
     desc: 'A real-time hand gesture recognition tool built with OpenCV and MediaPipe. Recognizes gestures like thumbs up, peace sign, OK sign, prayer hands, waving, and a raised hand (with a playful face-scan gender guess for its emoji badge) — each shown with a live label, emoji, and a hand-drawn illustration.',
     link: 'https://github.com/we3005/Hello-Webcam',
     media: '',
   },
   'video-converter': {
-    dot: '2',
+    dot: '3',
     title: 'Video Converter',
     desc: 'Turns YouTube, Instagram, or TikTok links into MP3, MP4, WAV, FLAC, OPUS, WEBM, or MKV files. Built in Python with github user we3005.',
     link: 'https://github.com/eungyeolhan/Video-Converter',
     media: '<img src="assets/video-converter.png" alt="Video Converter app screenshot">',
-  },
-  'economic-shock': {
-    dot: '3',
-    title: 'Economic Shock Simulator',
-    desc: 'A graph-based simulator that models economic shocks with a custom dashboard UI. Built in Python for a school project.',
-    link: 'https://github.com/Tabel0112/CSC111-Project-2',
-    media: '',
   },
 };
 
