@@ -86,24 +86,24 @@ const projectData = {
     link: 'https://github.com/we3005/Hello-Webcam',
     media: [],
   },
-  'video-converter': {
+  'pawfocus': {
     dot: '3',
+    title: 'PawFocus',
+    desc: 'A desktop study-timer app built in Python with Tkinter. A little cat floats on top of your other windows; click it to open a dropdown with your timers and a to-do list, so you can stay focused without switching apps. Runs on Windows and Mac.',
+    link: 'https://github.com/viaxshan/PawFocus',
+    media: [
+      { type: 'img', src: 'assets/pawfocus1.png', alt: 'PawFocus cat with its timer and to-do list dropdown' },
+      { type: 'img', src: 'assets/pawfocus2.png', alt: 'PawFocus sleeping cat overlay showing the countdown timer' },
+      { type: 'img', src: 'assets/pawfocus3.png', alt: 'PawFocus menu with Pawmodoro session settings, kitty size slider, and start/stop buttons' },
+    ],
+  },
+  'video-converter': {
+    dot: '4',
     title: 'Video Converter',
     desc: 'Turns YouTube, Instagram, or TikTok links into MP3, MP4, WAV, FLAC, OPUS, WEBM, or MKV files. Built in Python with github user we3005.',
     link: 'https://github.com/eungyeolhan/Video-Converter',
     media: [
       { type: 'img', src: 'assets/video-converter.png', alt: 'Video Converter app screenshot' },
-    ],
-  },
-  'pawfocus': {
-    dot: '4',
-    title: 'PawFocus',
-    desc: 'A desktop study-timer app built in Python with Tkinter. A little cat floats on top of your other windows; click it to open a dropdown with your timers and a to-do list, so you can stay focused without switching apps. Runs on Windows and Mac.',
-    link: 'https://github.com/viaxshan/PawFocus',
-    media: [
-      { type: 'img', src: 'assets/pawfocus-todo.png', alt: 'PawFocus cat with its timer and to-do list dropdown' },
-      { type: 'img', src: 'assets/pawfocus-timer.png', alt: 'PawFocus sleeping cat overlay showing the countdown timer' },
-      { type: 'img', src: 'assets/pawfocus-menu.png', alt: 'PawFocus menu with Pawmodoro session settings, kitty size slider, and start/stop buttons' },
     ],
   },
 };
