@@ -95,6 +95,13 @@ const projectData = {
       { type: 'img', src: 'assets/video-converter.png', alt: 'Video Converter app screenshot' },
     ],
   },
+  'pawfocus': {
+    dot: '4',
+    title: 'PawFocus',
+    desc: 'A desktop study-timer app built in Python with Tkinter. A little cat floats on top of your other windows; click it to open a dropdown with your timers and a to-do list, so you can stay focused without switching apps. Runs on Windows and Mac.',
+    link: '', // add the GitHub link here when ready
+    media: [],
+  },
 };
 
 const projectModalOverlay = document.getElementById('projectModalOverlay');
