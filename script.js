@@ -99,8 +99,12 @@ const projectData = {
     dot: '4',
     title: 'PawFocus',
     desc: 'A desktop study-timer app built in Python with Tkinter. A little cat floats on top of your other windows; click it to open a dropdown with your timers and a to-do list, so you can stay focused without switching apps. Runs on Windows and Mac.',
-    link: '', // add the GitHub link here when ready
-    media: [],
+    link: 'https://github.com/viaxshan/PawFocus',
+    media: [
+      { type: 'img', src: 'assets/pawfocus-todo.png', alt: 'PawFocus cat with its timer and to-do list dropdown' },
+      { type: 'img', src: 'assets/pawfocus-timer.png', alt: 'PawFocus sleeping cat overlay showing the countdown timer' },
+      { type: 'img', src: 'assets/pawfocus-menu.png', alt: 'PawFocus menu with Pawmodoro session settings, kitty size slider, and start/stop buttons' },
+    ],
   },
 };
 
